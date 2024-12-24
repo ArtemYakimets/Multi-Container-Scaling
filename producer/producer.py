@@ -2,11 +2,11 @@ import os
 import random
 import requests
 
-SIZE = int(os.get_env("SIZE"))
-PRODUCER_ID = int(os.get_env("PRODUCER_ID"))
-REQUEST_ATTEMPTS = int(os.get_env("REQUEST_ATTEMPTS"))
-SEND_URL = os.get_env("SEND_URL")
-FINISH_URL = os.get_env("FINISH_URL")
+SIZE = int(os.getenv("SIZE"))
+PRODUCER_ID = int(os.getenv("PRODUCER_ID"))
+REQUEST_ATTEMPTS = int(os.getenv("REQUEST_ATTEMPTS"))
+SEND_URL = os.getenv("SEND_URL")
+FINISH_URL = os.getenv("FINISH_URL")
 
 def send():
     num_elements = SIZE * SIZE
@@ -33,18 +33,18 @@ def finish():
     data = {"PRODUCER_ID": PRODUCER_ID, "SIZE": SIZE}
     data_send_flag = 0
 
-            for _ in range(REQUEST_ATTEMPTS):
-            try:
-                response = requests.post(SEND_URL, json=data)
-                response.raise_for_status()
-                data_send_flag = 1
-                break
-            except requests.exceptions.RequestException:
-                time.sleep(1)
-        if data_send_flag == 0:
-            print(f"Error: Failed to send the finish signal")
-        else:
-            print(f"The finish signal is sent succesfully")
+    for _ in range(REQUEST_ATTEMPTS):
+        try:
+            response = requests.post(SEND_URL, json=data)
+            response.raise_for_status()
+            data_send_flag = 1
+            break
+        except requests.exceptions.RequestException:
+            time.sleep(1)
+    if data_send_flag == 0:
+        print(f"Error: Failed to send the finish signal")
+    else:
+        print(f"The finish signal is sent succesfully")
 
 
 if __name__ == '__main__':
