@@ -1,0 +1,64 @@
+name: app
+
+services:
+  nginx:
+    image: nginx:latest
+    hostname: nginx
+    ports:
+      - "8080:80"
+    networks:
+      - network
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - consumer
+      - aggregator
+
+  consumer:
+    build:
+      context: ./consumer
+      no_cache: true
+    networks:
+      - network
+    deploy:
+      replicas: 2
+
+  producer1:
+    build:
+      context: ./producer
+      no_cache: true
+    env_file: ./producer.env
+    environment:
+      - PRODUCER_ID=1
+      - REQUEST_ATTEMPTS=10
+      - SEND_URL=http://nginx/send
+      - FINISH_URL=http://nginx/finish
+    depends_on:
+      - nginx
+    networks:
+      - network
+
+  producer2:
+    build:
+      context: ./producer
+      no_cache: true
+    env_file: ./producer.env
+    environment:
+      - PRODUCER_ID=2
+      - REQUEST_ATTEMPTS=10
+      - SEND_URL=http://nginx/send
+      - FINISH_URL=http://nginx/finish
+    depends_on:
+      - nginx
+    networks:
+      - network
+
+  aggregator:
+    build:
+      context: ./aggregator
+      no_cache: true
+    networks:
+      - network
+
+networks:
+  network:

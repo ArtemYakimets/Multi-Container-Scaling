@@ -19,7 +19,7 @@ def update_data():
     if PRODUCER_ID == 1:
         data1.append((index, element))
     elif PRODUCER_ID == 2:
-        data2.append((endex, element))
+        data2.append((index, element))
     else:
         return f"Error: Invalid PRODUCER_ID: {PRODUCER_ID}", 400
 

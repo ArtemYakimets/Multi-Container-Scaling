@@ -9,14 +9,14 @@ app = Flask(__name__)
 CONSUMER_URLS = [
     "http://app-consumer-1:8000/data",
     "http://app-consumer-2:8000/data",
-    "http://app-consumer-3:8000/data",
-    "http://app-consumer-4:8000/data",
-    "http://app-consumer-5:8000/data",
-    "http://app-consumer-6:8000/data",
-    "http://app-consumer-7:8000/data",
-    "http://app-consumer-8:8000/data",
-    "http://app-consumer-9:8000/data",
-    "http://app-consumer-10:8000/data"
+    # "http://app-consumer-3:8000/data",
+    # "http://app-consumer-4:8000/data",
+    # "http://app-consumer-5:8000/data",
+    # "http://app-consumer-6:8000/data",
+    # "http://app-consumer-7:8000/data",
+    # "http://app-consumer-8:8000/data",
+    # "http://app-consumer-9:8000/data",
+    # "http://app-consumer-10:8000/data"
 ]
 
 start_time = time.time()
@@ -27,15 +27,22 @@ data2_ready = 0
 data1_size = 0
 data2_size = 0
 
+aggregation_complete = False
 
-def collect_data():
-    for url in CONSUMER_URLS:
-        all_data = request.get(url).json()
 
-        data1 = all_data["data1"]
-        data2 = all_data["data2"]
+# def collect_data():
+#     data1, data2 = [], []
 
-    return data1, data2
+    # for url in CONSUMER_URLS:
+    #     try:
+    #         all_data = requests.get(url).json()
+    #         data1.extend(all_data.get("data1", []))
+    #         data2.extend(all_data.get("data2", []))
+    #         print(f"Succesful request from: {url}")
+    #     except requests.exceptions.RequestException as e:
+    #         print(f"Failed to fetch data from {url}: {e}")
+
+#     return data1, data2
 
 
 @app.route("/finish", methods=["POST"])
@@ -58,25 +65,40 @@ def get_finish():
     if data1_ready and data2_ready:
         threading.Thread(target = aggregate).start()
 
+    return "", 200
+
 
 def aggregate():
-    global start_time, data1_size, data2_size
+    global start_time, data1_size, data2_size, aggregation_complete
 
-    while True:
-        data1_raw, data2_raw = collect_data()
+    while not aggregation_complete:
+        #data1_raw, data2_raw = collect_data()
+
+        data1_raw = []
+        data2_raw = []
+
+        for url in CONSUMER_URLS:
+            try:
+                all_data = requests.get(url).json()
+                data1_raw.extend(all_data.get("data1", []))
+                data2_raw.extend(all_data.get("data2", []))
+                print(f"Succesful request from: {url}")
+                break
+            except requests.exceptions.RequestException as e:
+                print(f"Failed to fetch data from {url}: {e}")
 
         data1_raw.sort(key=lambda x: x[0])
-        data1 = [value for _, value in data1]
+        data1 = [value for _, value in data1_raw]
         data2_raw.sort(key=lambda x: x[0])
-        data2 = [value for _, value in data2]
+        data2 = [value for _, value in data2_raw]
 
-        if len(data1) != data1_size or len(data2) != data2_size or len(data1) != len(data2):
+        if len(data1) != (data1_size) or len(data2) != (data2_size) or len(data1) != len(data2):
             time.sleep(1)
             continue
 
         size = int(data1_size ** 0.5)
-        matrix1 = np.array().reshape(size, size)
-        matrix2 = np.array(p2_data).reshape(size, size)
+        matrix1 = np.array(data1).reshape(size, size)
+        matrix2 = np.array(data2).reshape(size, size)
         result = np.dot(matrix1, matrix2)
 
         end_time = time.time()
@@ -87,7 +109,7 @@ def aggregate():
 
         print(f"Time spent:{end_time - start_time} seconds")
 
-        return
+        aggregation_complete = True
 
 
 if __name__=="__main__":

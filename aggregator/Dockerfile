@@ -1,6 +1,6 @@
 FROM python:3.9-slim-bullseye
 
-RUN pip install flask numpy requests
+RUN pip install Flask numpy requests
 
 WORKDIR /app
 

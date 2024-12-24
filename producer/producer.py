@@ -31,12 +31,12 @@ def send():
 
 
 def finish():
-    data = {"PRODUCER_ID": PRODUCER_ID, "SIZE": SIZE}
+    data = {"PRODUCER_ID": PRODUCER_ID, "SIZE": SIZE * SIZE}
     data_send_flag = 0
 
     for _ in range(REQUEST_ATTEMPTS):
         try:
-            response = requests.post(SEND_URL, json=data)
+            response = requests.post(FINISH_URL, json=data)
             response.raise_for_status()
             data_send_flag = 1
             break
