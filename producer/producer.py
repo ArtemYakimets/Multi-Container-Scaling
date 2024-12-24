@@ -1,6 +1,7 @@
 import os
 import random
 import requests
+import time
 
 SIZE = int(os.getenv("SIZE"))
 PRODUCER_ID = int(os.getenv("PRODUCER_ID"))
