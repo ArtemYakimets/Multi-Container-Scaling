@@ -68,7 +68,6 @@ def aggregate():
                 data1_raw.extend(all_data.get("data1", []))
                 data2_raw.extend(all_data.get("data2", []))
                 print(f"Successful request from: {url}")
-                break
             except requests.exceptions.RequestException as e:
                 print(f"Failed to fetch data from {url}: {e}")
 
