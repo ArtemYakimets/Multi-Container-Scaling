@@ -31,5 +31,10 @@ def return_data():
     return jsonify({"data1": data1, "data2": data2})
 
 
+@app.get("/healthcheck")
+def healthcheck():
+    return {"status": "OK"}
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

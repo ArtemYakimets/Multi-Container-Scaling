@@ -9,14 +9,14 @@ app = Flask(__name__)
 CONSUMER_URLS = [
     "http://app-consumer-1:8000/data",
     "http://app-consumer-2:8000/data",
-    # "http://app-consumer-3:8000/data",
-    # "http://app-consumer-4:8000/data",
-    # "http://app-consumer-5:8000/data",
-    # "http://app-consumer-6:8000/data",
-    # "http://app-consumer-7:8000/data",
-    # "http://app-consumer-8:8000/data",
-    # "http://app-consumer-9:8000/data",
-    # "http://app-consumer-10:8000/data"
+    "http://app-consumer-3:8000/data",
+    "http://app-consumer-4:8000/data",
+    "http://app-consumer-5:8000/data",
+    "http://app-consumer-6:8000/data",
+    "http://app-consumer-7:8000/data",
+    "http://app-consumer-8:8000/data",
+    "http://app-consumer-9:8000/data",
+    "http://app-consumer-10:8000/data"
 ]
 
 start_time = time.time()
@@ -28,21 +28,6 @@ data1_size = 0
 data2_size = 0
 
 aggregation_complete = False
-
-
-# def collect_data():
-#     data1, data2 = [], []
-
-    # for url in CONSUMER_URLS:
-    #     try:
-    #         all_data = requests.get(url).json()
-    #         data1.extend(all_data.get("data1", []))
-    #         data2.extend(all_data.get("data2", []))
-    #         print(f"Succesful request from: {url}")
-    #     except requests.exceptions.RequestException as e:
-    #         print(f"Failed to fetch data from {url}: {e}")
-
-#     return data1, data2
 
 
 @app.route("/finish", methods=["POST"])
@@ -82,7 +67,7 @@ def aggregate():
                 all_data = requests.get(url).json()
                 data1_raw.extend(all_data.get("data1", []))
                 data2_raw.extend(all_data.get("data2", []))
-                print(f"Succesful request from: {url}")
+                print(f"Successful request from: {url}")
                 break
             except requests.exceptions.RequestException as e:
                 print(f"Failed to fetch data from {url}: {e}")
